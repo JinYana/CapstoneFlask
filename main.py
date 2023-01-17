@@ -1,7 +1,9 @@
+import json
 import os
 from io import BytesIO
 import xml.etree.ElementTree as ET
 import lxml
+import requests
 from lxml import objectify
 from PIL import Image
 from flask import Flask, request, flash, redirect
@@ -37,10 +39,10 @@ app = Flask(__name__)
 @app.route('/wronglevel', methods=['POST'])
 def wronglevel():
     request_json = request.get_json()
-    # level = request_json.get('level')
-    # shelf = request_json.get('shelfno')
-    # bookname = request_json.get('bookname')
-    # bookid = request_json.get('bookid')
+    level = request_json.get('level')
+    shelf = request_json.get('shelfno')
+    bookname = request_json.get('bookname')
+    bookid = request_json.get('bookid')
     image = request_json.get('image')
     #result = DeepFace.verify(img1_path="img1.jpg", img2_path="img2.jpg")
     imgdata = base64.b64decode(image)
@@ -53,8 +55,25 @@ def wronglevel():
     # filename = secure_filename(file.filename)
     # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
+    if level == "2":
+        url = "http://" + l2temi.ip + ":" + l2temi.port
+        dictionary = {'level':level, 'shelfno':shelf, 'bookname':bookname, 'bookid':bookid}
+        x = requests.post(url, json.dumps(dictionary), verify=False)
 
-    return
+    elif level == "3":
+        url = "http://" + l3temi.ip + ":" + l3temi.port
+        dictionary = {'level':level, 'shelfno':shelf, 'bookname':bookname, 'bookid':bookid}
+        x = requests.post(url, json.dumps(dictionary), verify=False)
+    else:
+        x = "no result"
+
+    if x == "temi3 is not free":
+        url = "http://" + l2temi.ip + ":" + l2temi.port
+        x = requests.post(url, "temi is not free", verify=False)
+
+
+
+    return "succ"
 
 @app.route('/faceverification', methods=['POST'])
 def faceverification():
