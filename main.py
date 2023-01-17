@@ -1,12 +1,32 @@
 import os
 from io import BytesIO
-
+import xml.etree.ElementTree as ET
+import lxml
+from lxml import objectify
 from PIL import Image
 from flask import Flask, request, flash, redirect
 from deepface import DeepFace
 from werkzeug.utils import secure_filename
 import base64
 
+class Client:
+    name = ""
+    ip = ""
+    port = ""
+
+addresses = ET.parse('addresses.xml')
+root = addresses.getroot()
+l3temi = Client()
+l2temi = Client()
+for child in root:
+    if child[0].text == "TemiL3":
+        l3temi.name = child[0].text
+        l3temi.ip = child[1].text
+        l3temi.port = child[2].text
+    elif child[0].text == "TemiL2 (phone)":
+        l2temi.name = child[0].text
+        l2temi.ip = child[1].text
+        l2temi.port = child[2].text
 
 app = Flask(__name__)
 # UPLOAD_FOLDER = '/CapstoneFlask'
@@ -32,6 +52,8 @@ def wronglevel():
     out_jpg.save("img1.jpg")
     # filename = secure_filename(file.filename)
     # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+
     return
 
 @app.route('/faceverification', methods=['POST'])
