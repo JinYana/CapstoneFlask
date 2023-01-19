@@ -110,3 +110,4 @@ def receivedImage():
 
 if __name__ == '__main__':
     app.run(host='192.168.43.244', port=8080, debug=True)
+    
