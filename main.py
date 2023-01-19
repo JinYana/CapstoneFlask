@@ -8,6 +8,7 @@ from flask import Flask, request, flash, redirect
 from deepface import DeepFace
 from werkzeug.utils import secure_filename
 import base64
+import requests
 
 class Client:
     name = ""
@@ -37,24 +38,37 @@ app = Flask(__name__)
 @app.route('/wronglevel', methods=['POST'])
 def wronglevel():
     request_json = request.get_json()
-    # level = request_json.get('level')
-    # shelf = request_json.get('shelfno')
-    # bookname = request_json.get('bookname')
-    # bookid = request_json.get('bookid')
-    image = request_json.get('image')
+    level = request_json.get('level')
+    shelf = request_json.get('shelfno')
+    bookname = request_json.get('bookname')
+    bookid = request_json.get('bookid')
+    
+    dictToSend = {'level':level,
+                  "shelfno": shelf,
+                  "bookid": bookid,
+                  "bookname": bookname}
+    
+    url = "http://172.20.10.6:8080"
+    url = "http://192.168.43.145:8080"
+    res = requests.post(url, json=dictToSend)
+    print("reponse from server:", res.text)
+    return res.text
+
+    #dictFromServer = res.json()
+        
+    # image = request_json.get('image')
     #result = DeepFace.verify(img1_path="img1.jpg", img2_path="img2.jpg")
-    imgdata = base64.b64decode(image)
-    img = Image.open(BytesIO(imgdata))
-    img.show()
+    # imgdata = base64.b64decode(image)
+    # img = Image.open(BytesIO(imgdata))
+    # img.show()
     # to jpg
-    out_jpg = img.convert("RGB")
+    # Out_jpg = img.convert("RGB")
     # save file
-    out_jpg.save("img1.jpg")
+    # out_jpg.save("img1.jpg")
     # filename = secure_filename(file.filename)
     # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    
 
-
-    return
 
 @app.route('/faceverification', methods=['POST'])
 def faceverification():
@@ -76,5 +90,25 @@ def faceverification():
 
     return result
 
+
+@app.route('/receiveimage', methods=["POST"])
+def receivedImage():
+    request_json = request.get_json()
+    image = request_json.get('image')
+    imgdata = base64.b64decode(image)
+    img = Image.open(BytesIO(imgdata))
+    out_jpg = img.convert("RGB")
+    
+    # save file
+    out_jpg.save("img2.jpg")
+    
+    # filename = secure_filename(file.filename)
+    # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    
+    result = DeepFace.verify(img1_path="img1.jpg", img2_path="img2.jpg")
+    print("Facial Recognition result is: ", result)
+
+    return result
+
 if __name__ == '__main__':
-    app.run(host='172.20.10.4', port=105)
+    app.run(host='192.168.43.244', port=8080)
