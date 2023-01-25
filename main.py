@@ -97,7 +97,7 @@ def receivedImage():
     # filename = secure_filename(file.filename)
     # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     
-    return 
+    return None
 
 # Image 2
 @app.route('/faceverification', methods=['POST'])
@@ -116,15 +116,16 @@ def faceverification():
     # save file
     out_jpg.save("img2.jpg")
     
-    output = DeepFace.verify("img1.jpg","img2.jpg")
     
+    output = DeepFace.verify("img1.jpg","img2.jpg")
     verification = output['verified']
     if verification:
-       print('They are same')
+        print("they are same")
+        
     else:
-       print('The are not same')
-    
-    return 
+       print("they are not the same")
+       
+    return None
 
 if __name__ == '__main__':
     app.run(host='192.168.43.244', port=8080)
