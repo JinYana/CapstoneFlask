@@ -9,6 +9,19 @@ from deepface import DeepFace
 from werkzeug.utils import secure_filename
 import base64
 import requests
+import os
+from io import BytesIO
+import xml.etree.ElementTree as ET
+import lxml
+from lxml import objectify
+from PIL import Image
+from flask import Flask, request, flash, redirect
+from deepface import DeepFace
+from werkzeug.utils import secure_filename
+import base64
+import requests
+import cv2
+import matplotlib.pyplot as plt
 
 class Client:
     name = ""
@@ -69,7 +82,24 @@ def wronglevel():
     # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     
 
+# Image 1
+@app.route('/receiveimage', methods=["POST"])
+def receivedImage():
+    request_json = request.get_json()
+    image = request_json.get('image')
+    imgdata = base64.b64decode(image)
+    img = Image.open(BytesIO(imgdata))
+    out_jpg = img.convert("RGB")
+    
+    # save file
+    out_jpg.save("img1.jpg")
+    
+    # filename = secure_filename(file.filename)
+    # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    
+    return 
 
+# Image 2
 @app.route('/faceverification', methods=['POST'])
 def faceverification():
     request_json = request.get_json()
@@ -81,34 +111,20 @@ def faceverification():
 
     imgdata = base64.b64decode(image)
     img = Image.open(BytesIO(imgdata))
-    img.show()
     # to jpg
     out_jpg = img.convert("RGB")
     # save file
     out_jpg.save("img2.jpg")
-    result = DeepFace.verify(img1_path="img1.jpg", img2_path="img2.jpg")
-
-    return result
-
-
-@app.route('/receiveimage', methods=["POST"])
-def receivedImage():
-    request_json = request.get_json()
-    image = request_json.get('image')
-    imgdata = base64.b64decode(image)
-    img = Image.open(BytesIO(imgdata))
-    out_jpg = img.convert("RGB")
     
-    # save file
-    out_jpg.save("img2.jpg")
+    output = DeepFace.verify("img1.jpg","img2.jpg")
     
-    # filename = secure_filename(file.filename)
-    # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    verification = output['verified']
+    if verification:
+       print('They are same')
+    else:
+       print('The are not same')
     
-    result = DeepFace.verify(img1_path="img1.jpg", img2_path="img2.jpg")
-    print("Facial Recognition result is: ", result)
-
-    return result
+    return 
 
 if __name__ == '__main__':
     app.run(host='192.168.43.244', port=8080)
