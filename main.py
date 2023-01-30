@@ -87,32 +87,18 @@ def wronglevel():
 @app.route('/receiveimage', methods=["POST"])
 def receivedImage():
     request_json = request.get_json()
-    level = request_json.get('level')
-    shelf = request_json.get('shelfno')
-    bookname = request_json.get('bookname')
-    bookid = request_json.get('bookid')
-
-    dictToSend = {'level': level,
-                  "shelfno": shelf,
-                  "bookid": bookid,
-                  "bookname": bookname}
-
-    url = "http://172.20.10.6:8080"
-    url = "http://192.168.43.145:8080"
-    res = requests.post(url, json=dictToSend)
-    print("reponse from server:", res.text)
     image = request_json.get('image')
     imgdata = base64.b64decode(image)
     img = Image.open(BytesIO(imgdata))
     out_jpg = img.convert("RGB")
-    
+    dictToSend = {'status':'success'}
     # save file
     out_jpg.save("img1.jpg")
     
     # filename = secure_filename(file.filename)
     # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    
-    return None
+
+    return json.dumps(dictToSend)
 
 # Image 2
 @app.route('/faceverification', methods=['POST'])
@@ -132,7 +118,7 @@ def faceverification():
     out_jpg.save("img2.jpg")
     
     
-    output = DeepFace.verify(img1_path="img1.jpg",img2_path="img2.jpg")
+    output = DeepFace.verify(img1_path="img1.jpg",img2_path="img2.jpg", enforce_detection=True)
     verification = output['verified']
     print(output)
     if verification:
