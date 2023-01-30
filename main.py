@@ -66,7 +66,10 @@ def wronglevel():
     url = "http://192.168.43.145:8080"
     res = requests.post(url, json=dictToSend)
     print("reponse from server:", res.text)
-    return res.text
+
+    dictToSend = {'response': res.text,
+                  'response_code': res.status_code}
+    return json.dump(dictToSend)
 
     #dictFromServer = res.json()
         
