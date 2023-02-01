@@ -7,7 +7,7 @@
     </client>
     <client>
         <name>TemiL3</name>
-        <ip>172.20.10.6</ip>
+        <ip>192.168.43.145</ip>
         <port>8080</port>
     </client>
 

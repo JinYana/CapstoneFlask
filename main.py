@@ -62,8 +62,13 @@ def wronglevel():
                   "bookid": bookid,
                   "bookname": bookname}
     
-    url = "http://172.20.10.6:8080"
-    url = "http://192.168.43.145:8080"
+    ## Can scale for more temi
+    url = ""
+    if level == 3:
+        url = l2temi.ip
+    elif level == 2:
+        url = l3temi.ip
+    
     res = requests.post(url, json=dictToSend)
     print("reponse from server:", res.text)
 
