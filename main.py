@@ -43,6 +43,8 @@ for child in root:
         l2temi.ip = child[1].text
         l2temi.port = child[2].text
 
+
+
 app = Flask(__name__)
 # UPLOAD_FOLDER = '/CapstoneFlask'
 # ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
@@ -61,20 +63,21 @@ def wronglevel():
                   "shelfno": shelf,
                   "bookid": bookid,
                   "bookname": bookname}
-    
+
+
     ## Can scale for more temi
     url = ""
-    if level == 3:
-        url = l2temi.ip
-    elif level == 2:
-        url = l3temi.ip
-    
+    if level == "3":
+        url = str(l3temi.ip)
+    elif level == "2":
+        url = str(l2temi.ip)
+
     res = requests.post(url, json=dictToSend)
     print("reponse from server:", res.text)
 
     dictToSend = {'response': res.text,
                   'response_code': res.status_code}
-    return json.dump(dictToSend)
+    return json.dumps(dictToSend)
 
     #dictFromServer = res.json()
         
