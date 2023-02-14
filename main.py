@@ -72,13 +72,14 @@ def wronglevel():
     elif level == "2":
         url = str(l2temi.ip)
 
+    # send back to temi if temi is not busy
     res = requests.post(url, json=dictToSend)
     print("reponse from server:", res.text)
 
     dictToSend = {'response': res.text,
                   'response_code': res.status_code}
     return json.dumps(dictToSend)
-
+ 
     #dictFromServer = res.json()
         
     # image = request_json.get('image')
@@ -145,4 +146,5 @@ def faceverification():
 
 
 if __name__ == '__main__':
-    app.run(host='192.168.43.240', port=8080)
+    #app.run(host='192.168.43.240', port=8080)
+    app.run(host='192.168.43.244', port=8080)
